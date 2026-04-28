@@ -116,8 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Monarch Logo
                       Image.asset(
                         'Assets/Images/Monarch.png',
-                        width: 44,
-                        height: 44,
+                        width: 80,
+                        height: 80,
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(width: 12),
