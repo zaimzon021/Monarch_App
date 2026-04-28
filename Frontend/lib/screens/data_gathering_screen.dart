@@ -162,7 +162,7 @@ class _DataGatheringScreenState extends State<DataGatheringScreen> {
                   children: [
                     // Top Progress Bar UI
                     const Text(
-                      'Step 1/4',
+                      'Step 1/7',
                       style: TextStyle(
                         color: Colors.black54, 
                         fontWeight: FontWeight.bold,
@@ -173,7 +173,7 @@ class _DataGatheringScreenState extends State<DataGatheringScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: 0.25, 
+                        value: 0.14, 
                         backgroundColor: Colors.grey.shade200,
                         color: const Color(0xFFFF7A66),
                         minHeight: 6,
