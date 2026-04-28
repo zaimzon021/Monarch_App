@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/profile_setup_provider.dart';
-import 'home_screen.dart'; // Place holder for mapping Step 4!
+import 'data_gathering_step4_screen.dart';
 
 class DataGatheringStep3Screen extends StatefulWidget {
   const DataGatheringStep3Screen({super.key});
@@ -18,9 +18,9 @@ class _DataGatheringStep3ScreenState extends State<DataGatheringStep3Screen> {
     // Suspend Data neatly in RAM Provider
     context.read<ProfileSetupProvider>().setStep3Data(_currentGpa);
 
-    // Temp routing to home screen until Step 4 exists!
+    // Push into Step 4
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(builder: (_) => const DataGatheringStep4Screen()),
     );
   }
 
@@ -46,7 +46,7 @@ class _DataGatheringStep3ScreenState extends State<DataGatheringStep3Screen> {
                   children: [
                     // Top Progress Bar
                     const Text(
-                      '3/4',
+                      '3/7',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black54, 
@@ -58,7 +58,7 @@ class _DataGatheringStep3ScreenState extends State<DataGatheringStep3Screen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: 0.75, 
+                        value: 0.42, 
                         backgroundColor: Colors.grey.shade200,
                         color: const Color(0xFFFF7A66),
                         minHeight: 6,
