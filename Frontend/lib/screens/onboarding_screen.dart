@@ -17,29 +17,13 @@ class OnboardingScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 40),
               
-              // Globe illustration placeholder
+              // Globe illustration
               Center(
-                child: Container(
-                  width: size.width * 0.7,
-                  height: size.width * 0.7,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.public, size: 80, color: Colors.blue.shade200),
-                        const SizedBox(height: 10),
-                        const Text(
-                          "Globe & Planes\nPlaceholder",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
+                child: Image.asset(
+                  'Assets/Images/Globe.png',
+                  width: size.width * 0.8,
+                  height: size.width * 0.8,
+                  fit: BoxFit.contain,
                 ),
               ),
               
