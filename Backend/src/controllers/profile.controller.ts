@@ -67,17 +67,6 @@ export const ProfileController = {
     // entranceExams — optional array, defaults to []
     const exams: string[] = Array.isArray(entranceExams) ? entranceExams : [];
 
-    const validExams = ["TOLC", "CENS"];
-    for (const exam of exams) {
-      if (!validExams.includes(exam.toUpperCase())) {
-        res.status(400).json({
-          success: false,
-          message: `Invalid entrance exam "${exam}". Allowed values: ${validExams.join(", ")}`,
-        });
-        return;
-      }
-    }
-
     // ── Call service ──────────────────────────────────────────────────────────
 
     const dto: CreateProfileDTO = {
@@ -89,7 +78,7 @@ export const ProfileController = {
       studyDestination: studyDestination.map((dest: string) => dest.trim()),
       languageProficiency: proficiency,
       fundingType,
-      entranceExams: exams.map((e: string) => e.toUpperCase()),
+      entranceExams: exams.map((e: string) => e.trim()),
     };
 
     try {
