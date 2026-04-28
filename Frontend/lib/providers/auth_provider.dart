@@ -44,6 +44,7 @@ class AuthProvider extends ChangeNotifier {
       if (data['token'] != null) {
          final prefs = await SharedPreferences.getInstance();
          await prefs.setString('jwt_token', data['token']);
+         await prefs.setString('user_email', email);
       }
 
       _isLoading = false;
