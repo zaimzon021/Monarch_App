@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/logo_reveal_widget.dart';
 import '../widgets/expanding_particles_widget.dart';
 import 'onboarding_screen.dart';
-import 'home_screen.dart';
+import 'main_layout.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -95,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   void _onAnimationStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.completed) {
-      final targetScreen = _hasToken ? const HomeScreen() : const OnboardingScreen();
+      final targetScreen = _hasToken ? const MainLayout() : const OnboardingScreen();
       
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
