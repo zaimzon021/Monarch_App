@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'university_detail_widgets.dart';
+import '../admission/application_requirements_screen.dart';
+
 
 class UniversityDetailScreen extends StatelessWidget {
   final Map<String, dynamic> university;
@@ -163,7 +165,18 @@ class UniversityDetailScreen extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(28),
-              onTap: () {},
+              onTap: () {
+                final passedUniId = university['_id']?.toString() ?? university['id']?.toString() ?? university['uniId']?.toString() ?? 'uni_001';
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ApplicationRequirementsScreen(
+                      uniId: passedUniId,
+                      universityData: university,
+                    ),
+                  ),
+                );
+              },
               child: const Center(
                 child: Text(
                   "Apply Now",
