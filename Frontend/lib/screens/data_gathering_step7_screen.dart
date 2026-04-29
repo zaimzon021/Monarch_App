@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/profile_setup_provider.dart';
+import '../services/profile_service.dart';
 import 'profile_loading_screen.dart';
 
 class DataGatheringStep7Screen extends StatefulWidget {
@@ -12,20 +15,57 @@ class DataGatheringStep7Screen extends StatefulWidget {
 
 class _DataGatheringStep7ScreenState extends State<DataGatheringStep7Screen> {
   final Set<String> _selectedExams = {};
+  bool _isCreatingProfile = false;
 
-  void _submit() {
-    // We allow proceeding even if no exams are selected (some students might not have exams).
-    // Or we can enforce at least 1? The user said "accept in array: 'entranceExams': ['TOLC'] like this". 
-    // Usually it's okay to have an empty array if none apply, but let's just proceed.
+  Future<void> _submit() async {
+    if (_isCreatingProfile) return;
     
-    // Save Selection to RAM Architecture
-    context.read<ProfileSetupProvider>().setStep7Data(_selectedExams.toList());
+    setState(() => _isCreatingProfile = true);
 
-    // Final step complete, begin analyzing profile!
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const ProfileLoadingScreen()),
-      (route) => false,
-    );
+    try {
+      context.read<ProfileSetupProvider>().setStep7Data(_selectedExams.toList());
+      
+      final prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('user_email');
+      
+      if (email == null) throw Exception("Authentication missing. Please restart the app.");
+      
+      final provider = context.read<ProfileSetupProvider>();
+      
+      final payload = {
+        "email": email,
+        "fullName": provider.fullName,
+        "location": provider.location,
+        "academicLevel": provider.academicLevel,
+        "gpa": provider.gpa,
+        "studyDestination": provider.studyDestinations,
+        "languageProficiency": provider.languageProficiency,
+        "fundingType": provider.fundingType,
+        "entranceExams": provider.entranceExams,
+      };
+      
+      final profileService = ProfileService();
+      final userData = await profileService.createProfile(payload);
+      
+      await prefs.setString('cached_user_profile', jsonEncode(userData));
+
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const ProfileLoadingScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isCreatingProfile = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.redAccent,
+          )
+        );
+      }
+    }
   }
 
   Widget _buildExamCard(String examName, IconData icon, Color themeColor) {
@@ -252,15 +292,24 @@ class _DataGatheringStep7ScreenState extends State<DataGatheringStep7Screen> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(28),
                     onTap: _submit,
-                    child: const Center(
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    child: Center(
+                      child: _isCreatingProfile
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              'Continue',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
