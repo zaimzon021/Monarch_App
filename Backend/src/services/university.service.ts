@@ -5,6 +5,8 @@ import { University, UniversityMatch, MatchBreakdown, MatchInsights } from "../m
 const UNIVERSITIES_COL = "universities";
 const USERS_COL = "users";
 const MATCH_RESULTS_COL = "match_results";
+const REQUIREMENTS_COL = "universities_requirements";
+const LINKS_COL = "universities_links";
 
 // ── Helper: Get user by email ────────────────────────────────────────────────
 
@@ -340,6 +342,38 @@ export type GetSavedMatchesResult =
 
 export async function getSavedMatches(email: string): Promise<GetSavedMatchesResult> {
   const doc = await db.collection(MATCH_RESULTS_COL).doc(email).get();
+
+  if (!doc.exists) {
+    return { success: false, reason: "not_found" };
+  }
+
+  return { success: true, data: doc.data()! };
+}
+
+// ── Get University Requirements by ID ────────────────────────────────────────
+
+export type GetRequirementsResult =
+  | { success: true; data: FirebaseFirestore.DocumentData }
+  | { success: false; reason: "not_found" };
+
+export async function getUniversityRequirements(uniId: string): Promise<GetRequirementsResult> {
+  const doc = await db.collection(REQUIREMENTS_COL).doc(uniId).get();
+
+  if (!doc.exists) {
+    return { success: false, reason: "not_found" };
+  }
+
+  return { success: true, data: doc.data()! };
+}
+
+// ── Get University Apply Link by ID ──────────────────────────────────────────
+
+export type GetLinkResult =
+  | { success: true; data: FirebaseFirestore.DocumentData }
+  | { success: false; reason: "not_found" };
+
+export async function getUniversityLink(uniId: string): Promise<GetLinkResult> {
+  const doc = await db.collection(LINKS_COL).doc(uniId).get();
 
   if (!doc.exists) {
     return { success: false, reason: "not_found" };
