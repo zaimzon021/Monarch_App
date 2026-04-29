@@ -47,4 +47,41 @@ class ProfileService {
       }
     }
   }
+
+  Future<dynamic> matchUniversities(String email) async {
+    final url = Uri.parse('http://127.0.0.1:3000/api/universities/match');
+    
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('jwt_token');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({"email": email}),
+      );
+
+      print("NODEJS RESPONSE [matchUniversities]: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body); // Let caller cache the raw json response
+      } else {
+        String errorMessage = 'Failed to match universities.';
+        try {
+          final data = jsonDecode(response.body);
+          if (data['message'] != null) errorMessage = data['message'];
+        } catch (_) {}
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      if (e is Exception && e.toString().contains('Exception:')) {
+        throw Exception(e.toString().replaceAll('Exception: ', '')); 
+      } else {
+        throw Exception('Network error: Ensure backend is running and reachable.');
+      }
+    }
+  }
 }
