@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "seed:universities": "ts-node src/scripts/seed-universities.ts",
     "seed:requirements": "ts-node src/scripts/seed-universities-requirements.ts",
+    "seed:links": "ts-node src/scripts/seed-unviersities-links.ts",
     "download:images": "ts-node src/scripts/download-university-images.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
