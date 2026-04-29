@@ -4,6 +4,7 @@ import { University, UniversityMatch, MatchBreakdown, MatchInsights } from "../m
 
 const UNIVERSITIES_COL = "universities";
 const USERS_COL = "users";
+const MATCH_RESULTS_COL = "match_results";
 
 // ── Helper: Get user by email ────────────────────────────────────────────────
 
@@ -303,7 +304,6 @@ export async function getUniversityMatches(email: string): Promise<GetMatchesRes
   const allMatches = universities.map((uni) => calculateMatch(user, uni));
 
   // 5. Filter: Only show universities where user meets MINIMUM requirements
-  // User must meet BOTH GPA and Language requirements
   const filteredMatches = allMatches.filter((match) => match.insights.meetsMinimumRequirements);
 
   // 6. Sort by match percentage (descending)
@@ -311,5 +311,39 @@ export async function getUniversityMatches(email: string): Promise<GetMatchesRes
 
   console.log(`Total universities: ${universities.length}, Meets requirements: ${filteredMatches.length}, Filtered out: ${universities.length - filteredMatches.length}`);
 
+  // 7. Save results to match_results collection (upsert by email)
+  await db.collection(MATCH_RESULTS_COL).doc(email).set({
+    email,
+    calculatedAt: new Date().toISOString(),
+    totalMatched: filteredMatches.length,
+    universities: filteredMatches.map((match) => ({
+      universityId: match.id,
+      name: match.name,
+      location: match.location,
+      imageUrl: match.imageUrl,
+      matchPercentage: match.matchPercentage,
+      admissionChance: match.admissionChance,
+      breakdown: match.breakdown,
+    })),
+  });
+
+  console.log(`Saved match results for ${email} to match_results collection`);
+
   return { success: true, matches: filteredMatches };
+}
+
+// ── Get Saved Match Results ──────────────────────────────────────────────────
+
+export type GetSavedMatchesResult =
+  | { success: true; data: FirebaseFirestore.DocumentData }
+  | { success: false; reason: "not_found" };
+
+export async function getSavedMatches(email: string): Promise<GetSavedMatchesResult> {
+  const doc = await db.collection(MATCH_RESULTS_COL).doc(email).get();
+
+  if (!doc.exists) {
+    return { success: false, reason: "not_found" };
+  }
+
+  return { success: true, data: doc.data()! };
 }
