@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import '../providers/auth_provider.dart';
-import 'home_screen.dart';
+import 'main_layout.dart';
 import 'data_gathering_screen.dart';
 
 class VerificationScreen extends StatefulWidget {
@@ -266,7 +266,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                 // Destroy the entire navigation stack so they can't 'back' into OTP screen
                                 if (isComplete) {
                                   Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                                    MaterialPageRoute(builder: (_) => const MainLayout()),
                                     (route) => false,
                                   );
                                 } else {
