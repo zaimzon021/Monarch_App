@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getUniversityMatches, getSavedMatches } from "../services/university.service";
+import { getUniversityMatches, getSavedMatches, getUniversityRequirements, getUniversityLink } from "../services/university.service";
 
 export const UniversityController = {
 
@@ -70,6 +70,64 @@ export const UniversityController = {
     } catch (err) {
       console.error("getMatchedUniversities error:", err);
       res.status(500).json({ success: false, message: "Failed to retrieve matched universities" });
+    }
+  },
+
+  async getRequirements(req: Request<{ uniId: string }>, res: Response): Promise<void> {
+    try {
+      const { uniId } = req.params;
+
+      if (!uniId) {
+        res.status(400).json({ success: false, message: "uniId is required" });
+        return;
+      }
+
+      const result = await getUniversityRequirements(uniId.trim());
+
+      if (!result.success) {
+        res.status(404).json({
+          success: false,
+          message: `No requirements found for university ID: ${uniId}`,
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        data: result.data,
+      });
+    } catch (err) {
+      console.error("getRequirements error:", err);
+      res.status(500).json({ success: false, message: "Failed to retrieve university requirements" });
+    }
+  },
+
+  async getLink(req: Request<{ uniId: string }>, res: Response): Promise<void> {
+    try {
+      const { uniId } = req.params;
+
+      if (!uniId) {
+        res.status(400).json({ success: false, message: "uniId is required" });
+        return;
+      }
+
+      const result = await getUniversityLink(uniId.trim());
+
+      if (!result.success) {
+        res.status(404).json({
+          success: false,
+          message: `No link found for university ID: ${uniId}`,
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        data: result.data,
+      });
+    } catch (err) {
+      console.error("getLink error:", err);
+      res.status(500).json({ success: false, message: "Failed to retrieve university link" });
     }
   },
 };
