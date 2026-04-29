@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/profile_setup_provider.dart';
 import '../services/profile_service.dart';
-import 'home_screen.dart';
+import 'main_layout.dart';
 
 class ProfileLoadingScreen extends StatefulWidget {
   const ProfileLoadingScreen({super.key});
@@ -22,7 +22,7 @@ class _ProfileLoadingScreenState extends State<ProfileLoadingScreen> with Single
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
-    _processProfileCreation();
+    _matchUniversities();
   }
 
   @override
@@ -31,7 +31,7 @@ class _ProfileLoadingScreenState extends State<ProfileLoadingScreen> with Single
     super.dispose();
   }
 
-  Future<void> _processProfileCreation() async {
+  Future<void> _matchUniversities() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final email = prefs.getString('user_email');
@@ -40,34 +40,20 @@ class _ProfileLoadingScreenState extends State<ProfileLoadingScreen> with Single
         throw Exception("Authentication missing. Please restart the app.");
       }
 
-      final provider = context.read<ProfileSetupProvider>();
-      
-      final payload = {
-        "email": email,
-        "fullName": provider.fullName,
-        "location": provider.location,
-        "academicLevel": provider.academicLevel,
-        "gpa": provider.gpa,
-        "studyDestination": provider.studyDestinations,
-        "languageProficiency": provider.languageProficiency,
-        "fundingType": provider.fundingType,
-        "entranceExams": provider.entranceExams,
-      };
-
       // Add a tiny artificial delay to make the beautiful loading screen visible 
       // (sometimes local nodejs is too fast!)
       await Future.delayed(const Duration(seconds: 2));
 
       final profileService = ProfileService();
-      final userData = await profileService.createProfile(payload);
+      final matchedUniversities = await profileService.matchUniversities(email);
 
-      // Successfully created profile in backend.
+      // Successfully retrieved matches.
       // Now, physical device offline caching using SharedPreferences:
-      await prefs.setString('cached_user_profile', jsonEncode(userData));
+      await prefs.setString('cached_matched_universities', jsonEncode(matchedUniversities));
 
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const MainLayout()),
           (route) => false,
         );
       }
