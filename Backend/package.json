@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc && xcopy /E /I /Y src\\templates dist\\templates",
+    "build": "tsc && cp -r src/templates dist/",
     "start": "node dist/server.js",
     "seed:universities": "ts-node src/scripts/seed-universities.ts",
     "seed:requirements": "ts-node src/scripts/seed-universities-requirements.ts",
