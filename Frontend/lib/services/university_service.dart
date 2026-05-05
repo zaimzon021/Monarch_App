@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class UniversityService {
-  static const String _baseUrl = 'http://127.0.0.1:3000/api/universities';
+  static const String _baseUrl = 'https://monarch-app.onrender.com/api/universities';
 
   static Future<Map<String, dynamic>?> getRequirements(String uniId) async {
     final url = Uri.parse('$_baseUrl/$uniId/requirements');

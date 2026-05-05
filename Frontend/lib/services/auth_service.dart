@@ -5,7 +5,7 @@ class AuthService {
   // If you run 'adb reverse tcp:3000 tcp:3000' in your terminal, 
   // your physical phone will magically be able to read this exactly as written!
   // Otherwise, change this to your computer's local Wi-Fi IP address (e.g. 192.168.1.10)
-  static const String _baseUrl = 'http://127.0.0.1:3000/api/auth';
+  static const String _baseUrl = 'https://monarch-app.onrender.com/api/auth';
 
   Future<void> sendOtp(String email) async {
     final url = Uri.parse('$_baseUrl/send-otp');

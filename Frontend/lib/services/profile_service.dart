@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileService {
-  static const String _baseUrl = 'http://127.0.0.1:3000/api/profile';
+  static const String _baseUrl = 'https://monarch-app.onrender.com/api/profile';
 
   Future<Map<String, dynamic>> createProfile(Map<String, dynamic> profileData) async {
     final url = Uri.parse('$_baseUrl/create-profile');
@@ -49,7 +49,7 @@ class ProfileService {
   }
 
   Future<dynamic> matchUniversities(String email) async {
-    final url = Uri.parse('http://127.0.0.1:3000/api/universities/match');
+    final url = Uri.parse('https://monarch-app.onrender.com/api/universities/match');
     
     try {
       final prefs = await SharedPreferences.getInstance();
